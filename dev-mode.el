@@ -22,20 +22,47 @@
 (defvar dev/wnd-default nil "Default window.")
 (defvar dev/window-names (make-hash-table :test 'equal) "Hash of windows names.")
 
-(defun set-window-name (name)
-  "NAME."
-  (interactive)
-  (setf (gethash name dev/window-names) (selected-window)))
+(eval-when-compile (require 'subr-x))
 
-(defun get-window-by-name (name)
-  "NAME."
+(defun set-window-name (name)
+  "Set NAME to window."
+  (interactive)
+  ;;(setf (gethash name dev/window-names) (selected-window))
+  (let ((wnd (selected-window)))
+    (puthash name wnd dev/window-names)
+  ))
+
+(defun get-window-name (name)
+  "Get window NAME."
   (interactive)
   (gethash name dev/window-names))
 
+(defun get-names-list-by-window (name)
+  "Get NAME by window."
+  (interactive)
+  (let ((list-keys (remove-duplicates  (hash-table-keys dev/window-names))))
+    (mapcar
+		(lambda (key)
+		  (if (eql (gethash key dev/window-names) name)
+		      key))
+		list-keys)))
+
+(defun get-name-by-window (name)
+  "Get first NAME from result list."
+  (car (get-names-list-by-window name)))
+
+
+(get-name-by-window (selected-window))
+
+
 (defun get-window-name ()
+   (let ((wnd (select-window))
+	 (gethash name window-names)
+	 )
   )
 
-
+   (hash-table-keys dev/window-names)
+   (hash-table-values dev/window-names)
 
 (defun split-window-left (&optional size)
   "Split window left &optional SIZE.  Based on 'split-window-right'."
@@ -256,4 +283,24 @@
 (eval `(dired "~"))
 
 
-(mapcar )
+(shell-dir "~" )
+()
+
+((gethash "z" dev/window-names) (selected-window))
+
+(setq window-names (make-hash-table :test 'equal ))
+
+(defun name-window ()
+  (interactive)
+  (let ((name (read-input "Name: ")))
+    (setf (gethash name window-names) (selected-window))))
+
+(defun del-window ()
+  (interactive)
+  (let ((name (read-input "Name: ")))
+    (delete-window (gethash name window-names))))
+
+(name-window)
+ (gethash "aaa" window-names)
+
+(message "%s" window-names)
