@@ -47,27 +47,15 @@
 		      key))
 		list-keys)))
 
-(defun get-name-by-window (name)
-  "Get first NAME from result list."
-  (car (get-names-list-by-window name)))
-
-
-(get-name-by-window (selected-window))
-
-
-(defun get-window-name ()
-   (let ((wnd (select-window))
-	 (gethash name window-names)
-	 )
-  )
-
-   (hash-table-keys dev/window-names)
-   (hash-table-values dev/window-names)
+(defun get-name-by-window (wnd)
+  "Get first name from result list founded by WND."
+  (car (get-names-list-by-window wnd)))
 
 (defun split-window-left (&optional size)
   "Split window left &optional SIZE.  Based on 'split-window-right'."
   ;; Default value of size
   (if (eql size nil)
+
       (setq size dev/wnd-left-width))
   ;; Split works
   (split-window-right size)
@@ -207,9 +195,11 @@
   (select-window dev/wnd-default))
 
 (defun left (&rest wnds)
-  "WNDS."
-  (split-window-horizontally 40)
-  (base wnds))
+  "WNDS.NAME."
+  (split-window-right 40);;(dev/wnd-left-width))
+  (let ((left-wnd (selected-window))
+	(dev/wnd-default (previous-window)))
+    (base wnds)))
 
 (defun center (&rest wnds)
   "WNDS."
@@ -264,31 +254,14 @@
   ;;(center `(set-default-buffer) `(shell-dir "~"))
   )
 
-(defun test()
+ (defun test()
   ;;(kill-all-local-variables)
   (delete-other-windows)
-  (set-default-wnd)
-  (defOptions "~/Documents"))
+  ;(set-default-wnd)
+  (defOptions "~/Documents")
+  (to-default-wnd))
 
 (test)
-(center `(shell-dir "~"))
-(center `(set-default-buffer))
-`(shell-dir "~"))
-
-(window-buffer)
-(dired "~")
-(split-window-vertically)
-(split-window-horizontally)
-
-(eval `(dired "~"))
-
-
-(shell-dir "~" )
-()
-
-((gethash "z" dev/window-names) (selected-window))
-
-(setq window-names (make-hash-table :test 'equal ))
 
 (defun name-window ()
   (interactive)
@@ -304,3 +277,4 @@
  (gethash "aaa" window-names)
 
 (message "%s" window-names)
+
