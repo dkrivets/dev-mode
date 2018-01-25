@@ -16,11 +16,19 @@
   :type 'integer
   :group 'dev-mode)
 
+;;; Dirs
+(defcustom dev/default-dir "~"
+  "Default directory."
+  :type 'string
+  :group 'dev-mode)
+
+
 ;;;
 (defvar left-wnd-list '() "List of left windows.")
 (defvar center-wnd-list '() "List of windows in center.")
 (defvar dev/wnd-default nil "Default window.")
 (defvar dev/window-names (make-hash-table :test 'equal) "Hash of windows names.")
+
 
 (eval-when-compile (require 'subr-x))
 
@@ -121,94 +129,6 @@
   (remove-duplicates left-wnd-list)
   (remove-duplicates center-wnd-list))
 
-(defun dev-mode (dir)
-  "Mode for people likes IDE.  DIR start dir."
-  (interactive "DDirectory:")
-  (kill-all-local-variables)
-  (delete-other-windows)
-  (let ((last-buffer (window-buffer)))
-    ;; check default
-    (if (and (eq 0 (length left-wnd-list)) (eq 0 (length center-wnd-list)))
-	(default-wnd dir)
-      (message "nothing"))
-    ;; build left
-    (message "build left")
-    (message "left-wnd-list: %s" left-wnd-list)
-    (setq counter 0)
-    (dolist (item left-wnd-list)
-      (setq counter (1+ counter))
-      (let ((fx (car item))
-    	    (name (car (cdr item))))
-	(message "left %s" name)
-	(if (> counter 1)
-	    (create-wnd '(split-window-left dev/wnd-left-width) fx name)
-	  (create-wnd '(split-window dev/wnd-left-width) fx name))))
-    (message "build center")
-    (setq counter 0)
-    (dolist (item center-wnd-list)
-      (setq counter (1+ counter))
-      (let ((fx (car item))
-	    (name (car (cdr item))))
-	(message "center %s" name)
-	(create-wnd '(split-window) fx name)))
-    ;; if no buffers
-    (if (and (eq 1 (length (window-list))) (eq last-buffer (window-buffer)))
-	(switch-to-buffer (get-buffer-create dev/edit)))
-    (if (and (< 1 (length (window-list))) (eq last-buffer (window-buffer (other-window 1))))
-	(delete-window))
-    )
-  )
-(provide 'dev-mode)
-;;; dev-mode.el Ends here
-;(window-buffer)
-;(buffer-name)
-;(setq left-wnd-list '())
-;(setq center-wnd-list '())
-
-;;(defun base (&rest wnds)
-;;  "WNDS."
-;;  (let  ((counter 0))
-;;    (dolist (item wnds)
-;;      (setq counter (1+ counter))
-;;      (if (> 1 counter)
-;;	  (split-window-vertically))
-;;      (message "item: %s"item)
-;;      (eval (car item))
-;;      (other-window 1))))
-
-(defun base (wnds)
-  "WNDS."
-  (let  ((counter 0))
-    (mapc
-     (lambda (item)
-       (setq counter (1+ counter))
-       (if (> 1 counter)
-	   ;;(split-window-vertically))
-       	   (split-window-below))
-       (message "item: %s" item)
-       (eval item)
-       (other-window 1))
-     wnds)))
-
-
-(defun to-default-wnd()
-  (select-window dev/wnd-default))
-
-(defun left (&rest wnds)
-  "WNDS.NAME."
-  (split-window-right 40);;(dev/wnd-left-width))
-  (let ((left-wnd (selected-window))
-	(dev/wnd-default (previous-window)))
-    (base wnds)))
-
-(defun center (&rest wnds)
-  "WNDS."
-  (to-default-wnd)
-  (base wnds))
-
-(defun set-default-buffer ()
-  "."
-  (switch-to-buffer (get-buffer-create dev/edit)))
 
 (defun set-default-wnd ()
   "."
@@ -227,54 +147,26 @@
   	  (other-window -1)
  	  (switch-to-buffer shell-buf)))))
 
-(defun defOptions(dir)
-  "DIR."
-  ;;(switch-to-buffer (get-buffer-create "*scratch*"))
-  ;;(set-default-buffer)
-  
-  ;;(split-window-horizontally 40)
-  ;;(dired "~")
-  ;;(other-window 1)
-  (left `(dired "~"))
-
-
-  ;;(split-window-vertically)
-  ;;(other-window 1)
-  ;;(let ((default-directory "~")
-  ;;	(shell-wnd (selected-window))
-  ;;	(shell-buff nil))
-  ;;  (setq shell-buf (shell))
-  ;;  (if (not (eq (selected-window) shell-wnd))
-  ;;	(progn
-  ;;	  (previous-buffer)
-  ;;	  (other-window -1)
-  ;;	  (switch-to-buffer shell-buf))))
-  ;;(split-window-vertically)
-  ;;(other-window)
-  ;;(center `(set-default-buffer) `(shell-dir "~"))
-  )
-
- (defun test()
-  ;;(kill-all-local-variables)
-  (delete-other-windows)
-  ;(set-default-wnd)
-  (defOptions "~/Documents")
-  (to-default-wnd))
-
-(test)
-
-(defun name-window ()
+(defun dev-mode()
   (interactive)
-  (let ((name (read-input "Name: ")))
-    (setf (gethash name window-names) (selected-window))))
+  (let ((check-dir (read-input "Directory to start: ")))
+    (let ((start-dir (if (eql (length check-dir) 0) dev/default-dir check-dir) ))
+      (message start-dir)
+      ;;; Delete all windows
+      (delete-other-windows)
+      ;;;
+      (split-window-horizontally)
+      (dired start-dir)
+      
+      (other-window -1)
+      (split-window-vertically)
+      (switch-to-buffer dev/edit)
+      
+      (other-window 1)
+      ;;(shell start-dir)
+      ;;(switch-to-buffer "*shell*")
+      (shell-dir start-dir)
+      (switch-to-buffer "*shell*")
+      )))
 
-(defun del-window ()
-  (interactive)
-  (let ((name (read-input "Name: ")))
-    (delete-window (gethash name window-names))))
-
-(name-window)
- (gethash "aaa" window-names)
-
-(message "%s" window-names)
-
+(provide 'dev-mode)
