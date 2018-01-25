@@ -154,19 +154,26 @@
       (message start-dir)
       ;;; Delete all windows
       (delete-other-windows)
-      ;;;
+
+      ;;; Dired in left side
       (split-window-horizontally)
       (dired start-dir)
-      
+
+      ;;; Central window
       (other-window -1)
       (split-window-vertically)
       (switch-to-buffer dev/edit)
-      
+
+      ;;; Shell which opened in project dir
       (other-window 1)
       ;;(shell start-dir)
       ;;(switch-to-buffer "*shell*")
       (shell-dir start-dir)
       (switch-to-buffer "*shell*")
+
+      ;;; Balance area
+      (balance-windows-area)
       )))
 
 (provide 'dev-mode)
+(dev-mode)
