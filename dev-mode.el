@@ -16,6 +16,18 @@
   :type 'directory
   :group 'dev-mode)
 
+;;; Dired width
+(defcustom dev/dired-width 40
+  "Default dired width."
+  :type 'integer
+  :group 'dev-mode)
+
+;;; Shell height
+(defcustom dev/shell-height 60
+  "Default shell height."
+  :type 'integer
+  :group 'dev-mode)
+
 (eval-when-compile (require 'subr-x))
 
 (defun shell-dir (dir)
@@ -40,7 +52,7 @@
       (delete-other-windows)
 
       ;;; Dired in left side
-      (split-window-horizontally)
+      (split-window-horizontally dev/dired-width)
       (dired start-dir)
 
       ;;; Central window
