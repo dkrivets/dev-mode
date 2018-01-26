@@ -13,7 +13,7 @@
 ;;; Dirs
 (defcustom dev/default-dir "~"
   "Default directory."
-  :type 'string
+  :type 'directory
   :group 'dev-mode)
 
 (eval-when-compile (require 'subr-x))
@@ -33,7 +33,7 @@
 (defun dev-mode()
   "DEV-MODE main code"
   (interactive)
-  (let ((check-dir (read-input "Directory to start: ")))
+    (let ((check-dir (read-directory-name "Directory to start: ")))
     (let ((start-dir (if (eql (length check-dir) 0) dev/default-dir check-dir) ))
       (message start-dir)
       ;;; Delete all windows
