@@ -60,13 +60,18 @@
 	      (progn
 		(previous-buffer)
 		(other-window -1)
-		(switch-to-buffer shell-buf)))))
+		(switch-to-buffer shell-buf))
+	    (message "other way"))))
     ;; If exist shell
     (comint-send-string (get-buffer-process (get-buffer "*shell*"))
 			(format "%s %s\n" "cd" dir))))
 
-(defun dev-mode()
+;(defun dev-mode()
+(define-minor-mode dev-mode
   "DEV-MODE main code"
+  :group 'dev-mode
+  :require 'dev-mode
+  :global t
   (interactive)
     (let ((check-dir (read-directory-name "Directory to start: ")))
     (let ((start-dir (if (eql (length check-dir) 0) dev/default-dir check-dir) ))
@@ -93,6 +98,7 @@
       ;;; Balance area
       (balance-windows-area) )))
 
-(use-local-map dev-mode-map)
+;;(use-global-map dev-mode-map)
+;;(use-local-map dev-mode-map)
 
 (provide 'dev-mode)
