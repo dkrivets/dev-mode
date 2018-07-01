@@ -36,14 +36,18 @@
   :type 'integer
   :group 'dev-mode)
 
-(defvar dev-mode-map nil "Keymap for dev-mode.")
+(defvar dev-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c C-n") #'dev-mode)
+    map)
+  "Keymap for dev-mode.")
 
-(progn
-  ;; Initialize
-  (setq dev-mode-map (make-sparse-keymap))
-
-  ;; Re-start/Re-open new project
-  (define-key dev-mode-map (kbd "C-c C-n") 'dev-mode))
+;(progn
+;  ;; Initialize
+;  (setq dev-mode-map (make-sparse-keymap))
+;
+;  ;; Re-start/Re-open new project
+;  (define-key dev-mode-map (kbd "C-c C-n") 'dev-mode))
 
 (eval-when-compile (require 'subr-x))
 
