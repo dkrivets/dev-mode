@@ -42,13 +42,6 @@
     map)
   "Keymap for dev-mode.")
 
-;(progn
-;  ;; Initialize
-;  (setq dev-mode-map (make-sparse-keymap))
-;
-;  ;; Re-start/Re-open new project
-;  (define-key dev-mode-map (kbd "C-c C-n") 'dev-mode))
-
 (eval-when-compile (require 'subr-x))
 
 (defun shell-dir (dir)
@@ -58,7 +51,7 @@
 	;; If not exist
 	(let ((default-directory dir)
 	      (shell-wnd (selected-window))
-	      (shell-buff nil))
+	      (shell-buf nil))
 	  (setq shell-buf (shell))
 	  (if (not (eq (selected-window) shell-wnd))
 	      (progn
@@ -75,6 +68,7 @@
   "DEV-MODE main code"
   :group 'dev-mode
   :require 'dev-mode
+  :keymap dev-mode-map
   :global t
   (interactive)
     (let ((check-dir (read-directory-name "Directory to start: ")))
@@ -98,7 +92,8 @@
       ;;(switch-to-buffer "*shell*")
       (shell-dir start-dir)
       (switch-to-buffer "*shell*")
-
+      (adjust-window-trailing-edge (selected-window) (- dev/shell-height (window-width)) t)
+      
       ;;; Balance area
       (balance-windows-area) )))
 
