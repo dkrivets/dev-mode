@@ -10,7 +10,7 @@
 
 ;;; Code:
 
-(defgroup dev-mode nil "Default group for dev-mode." :group 'application)
+(defgroup dev-mode nil "Dev-mode customization." :group 'applications)
 
 ;;; Buffers
 (defcustom dev/edit "*scratch*"
